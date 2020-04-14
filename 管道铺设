@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAXINT 9999
+#define MAX 100
+void beauty()                                                            //界面函数beauty
+{
+	printf("        *******************************\n    ");
+	printf("    ***                         ***\n    ");
+	printf("    ***       Welcome to u      ***\n    ");
+	printf("    ***                         ***\n    ");
+	printf("    *******************************\n    ");
+}
+void Read(int a[][MAX], int* v)                                   //输入函数
+{
+	int n, i, j, w;
+	printf("\nPlease input num:\n");
+	scanf_s("%d", &n);
+	printf("Please input node num:\n");                       //n为节点个数
+	if (n > MAX)
+	{
+		printf("Input node value not > %d", MAX);
+		return;
+	}
+	*v = n;
+	for (i = 0; i < n; i++)
+		for (j = 0; j < n; j++)  a[i][j] = MAXINT;            //刷新二维数组
+	do
+	{
+		scanf_s("%d%d%d", &i, &j, &w);                       //输入顶点边的信息，存入二维数组中
+		if (i == -1 || j == -1 || w == -1)  break;
+		a[i][j] = w;
+	} while (9);
+}
+int Prim(int a[][MAX], int n)
+{
+	int c, i, j, min_w, min_i, min_j, sum = 0;
+	float money;
+	a[0][0] = -1;                                  //开始选中0节点 扫描
+	for (c = 0; c < n - 1; c++)
+	{
+		min_w = MAXINT;
+		min_i = -1;
+		min_j = -1;
+		for (i = 0; i < n; i++)
+		{
+			for (j = 0; j < n; j++)
+			{
+				if (i != j && (a[i][i] == -1 && a[j][j] != -1 || a[i][i] != -1 && a[j][j] == -1) && a[i][j] < min_w)            //从节点扫描，找出同i点相关的节点(该节点未访问)最小的权
+				{
+					min_w = a[i][j];
+					min_i = i;
+					min_j = j;
+				}
+			}
+		}
+		if (min_i != -1)
+		{
+			printf("(V%-2d,V%d) ", min_i, min_j);
+			a[min_i][min_i] = a[min_j][min_j] = -1;       //将该节点的对角线上的值赋-1
+			sum += min_w;
+		}
+		else
+		{
+			printf("图不是连通的\n");
+			return 0;
+		}
+	}
+	
+	return sum;
+
+}
+
+void biu()                                             //用于循环系统使用
+{
+	int m;
+	printf("\n       continue or quit? \n");
+	printf("Choose1.  continue to calculate\n");
+	printf("Choose2.  log out\n");
+	scanf_s("%d", &m);
+	if (m == 2)
+	{
+		printf("     Thanks for using!\n\n     See u next time\n\n");
+		return ;
+	}
+	else
+	{
+		int a[MAX][MAX], vnum, sum;
+		float money;
+		for (int i = 0;;)
+		{
+			Read(a, &vnum);
+			sum = Prim(a, vnum);
+			printf("\nThe sum is %d \n", sum);
+			printf("\nHow much is it?\n");
+			scanf_s("%f", &money);
+			printf("\nThe cost is %.3f\n", money * sum);
+			if (m == 1) biu();
+			if (m == 0)
+			{
+				printf("     Thanks for using!\n\n     See u next time\n\n");
+				break;
+			}
+		}
+	}
+}
+int main()
+{
+	int a[MAX][MAX], vnum, sum;
+	float money;
+	beauty();
+	Read(a, &vnum);
+	sum = Prim(a, vnum);
+	if (sum != 0)
+	{
+		printf("\nThe sum is %d \n", sum);
+		printf("\nHow much is it?\n");
+		scanf_s("%f", &money);
+		printf("\nThe cost is %.3f\n", money * sum);
+		biu();
+	}
+	
+}
+
